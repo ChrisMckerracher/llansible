@@ -1,0 +1,22 @@
+- name: Register Redis with Zookeeper
+  hosts: redis_hosts
+  become: true
+
+  tasks:
+    - name: Delete Redis node on Zookeeper
+      command: "{{ zk_path }}/bin/zkCli.sh -server {{ hostvars['zookeeper']['self_host'] }}:{{ hostvars['zookeeper']['zookeeper_port']}} deleteall /redis"
+
+    - name: Create Redis node on Zookeeper
+      command: "{{ zk_path }}/bin/zkCli.sh -server {{ hostvars['zookeeper']['self_host'] }}:{{ hostvars['zookeeper']['zookeeper_port']}} create /redis"
+
+    - name: Register Redis host with Zookeeper
+      command: "{{ zk_path }}/bin/zkCli.sh -server {{ hostvars['zookeeper']['self_host'] }}:{{ hostvars['zookeeper']['zookeeper_port']}} create /redis/host {{ hostvars[inventory_hostname].self_host }}"
+
+    - name: Get ZooKeeper Node Data
+      command: "{{ zk_path }}/bin/zkCli.sh -server {{ hostvars['zookeeper']['self_host'] }}:{{ hostvars['zookeeper']['zookeeper_port'] }} get /redis/host"
+      register: zk_result
+      ignore_errors: yes
+
+    - name: Verify ZooKeeper Node Data
+      debug:
+        var: zk_result.stdout_lines

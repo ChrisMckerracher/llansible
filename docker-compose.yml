@@ -1,0 +1,22 @@
+services:
+  zookeeper-ec2:
+    build:
+      context: "./"
+      dockerfile: Dockerfile
+    ports:
+      - "2222:22"
+      - "2181:2181"
+  redis-ec2:
+    build:
+      context: "./"
+      dockerfile: Dockerfile
+    ports:
+      - "2221:22"
+      - "6379:6379"
+  app-ec2:
+    build:
+      context: "./"
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+      - "2223:22"

@@ -1,0 +1,25 @@
+- name: Install redis
+  hosts: redis_hosts
+  become: true
+
+  tasks:
+    - name: Install packages
+      package:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - redis-server
+
+    - name: Start Redis Server as a daemon
+      command: "redis-server --daemonize yes"
+      async: 3600  # The time in seconds to allow the command to run (adjust as needed)
+      poll: 0  # Check immediately after running the command
+      register: async_result
+
+    - name: Wait for Redis to start
+      async_status:
+        jid: "{{ async_result.ansible_job_id }}"
+      register: job_result
+      until: job_result.finished
+      retries: 60  # Adjust the number of retries as needed
+      delay: 10  # Adjust the delay between retries as needed

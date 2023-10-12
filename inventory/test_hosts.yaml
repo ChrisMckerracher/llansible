@@ -1,0 +1,23 @@
+all:
+  children:
+    zookeeper_host:
+      hosts:
+        zookeeper:
+          ansible_ssh_host: localhost
+          self_host: "172.28.0.4"
+          ansible_user: root
+          ansible_ssh_common_args: "-p 2222 -o StrictHostKeyChecking=no -i ~/.ssh/my-ssh-key"
+    redis_hosts:
+      hosts:
+        redis1:
+          ansible_ssh_host: localhost
+          self_host: "172.28.0.2"
+          ansible_user: root
+          ansible_ssh_common_args: "-p 2221 -o StrictHostKeyChecking=no -i ~/.ssh/my-ssh-key"
+    app_hosts:
+      hosts:
+        app1:
+          ansible_ssh_host: localhost
+          ansible_user: root
+          ansible_ssh_common_args: "-p 2223 -o StrictHostKeyChecking=no -i ~/.ssh/my-ssh-key"
+

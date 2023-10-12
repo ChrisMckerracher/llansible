@@ -1,0 +1,67 @@
+- name: Install zookeeper
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Remove apt lock file 1
+      file:
+        state: absent
+        path: "/var/lib/dpkg/lock"
+
+    - name: Remove apt lock file 2
+      file:
+        state: absent
+        path: "/var/lib/apt/lists/lock"
+    - name: Install packages
+      package:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - openjdk-8-jdk
+
+    - name: Reg java home
+      shell: echo JAVA_HOME is $JAVA_HOME
+      environment:
+        JAVA_HOME: /usr/lib/jvm/java-8-openjdk-arm64/
+      register: shellout
+
+    - name: Download the file
+      get_url:
+        url: "{{ zk_download }}"
+        checksum: "{{ zk_checksum }}"
+        dest: /tmp/zk.tar.gz
+
+    - name: Extract the downloaded file
+      command: tar -xzvf /tmp/zk.tar.gz -C /tmp/
+      args:
+        creates: /tmp/apache-zookeeper-3.8.3-bin  # This line prevents the command from running if the directory already exists
+
+    - name: Copy Zookeeper
+      copy:
+        remote_src: yes
+        src: /tmp/apache-zookeeper-3.8.3-bin/
+        dest: "{{ zk_path }}/"
+
+    - name: Copy default config
+      copy:
+        remote_src: yes
+        src: "{{ zk_path }}/conf/zoo_sample.cfg"
+        dest: "{{ zk_path }}/conf/zoo.cfg"
+
+- name: Run zookeeper
+  hosts: zookeeper
+  become: true
+  tasks:
+    - name: Start ZooKeeper Server as a daemon
+      command: "{{ zk_path }}/bin/zkServer.sh start"
+      async: 3600  # The time in seconds to allow the command to run (adjust as needed)
+      poll: 0  # Check immediately after running the command
+      register: async_result
+
+    - name: Wait for ZooKeeper to start
+      async_status:
+        jid: "{{ async_result.ansible_job_id }}"
+      register: job_result
+      until: job_result.finished
+      retries: 60  # Adjust the number of retries as needed
+      delay: 10  # Adjust the delay between retries as needed

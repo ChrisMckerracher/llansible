@@ -1,0 +1,22 @@
+all:
+  children:
+    redis_hosts:
+      hosts:
+        redis1:
+          ansible_ssh_host: something
+        redis2:
+          ansible_ssh_host: something2
+        redis3:
+          ansible_ssh_host: something3
+    server_hosts:
+      hosts:
+        server1:
+          ansible_ssh_host: something
+        server2:
+          ansible_ssh_host: something2
+        server3:
+          ansible_ssh_host: something3
+    zookeeper_host:
+      hosts:
+        zookeeper:
+          ansible_ssh_host: something

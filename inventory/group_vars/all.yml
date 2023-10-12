@@ -1,0 +1,4 @@
+zk_download: "https://dlcdn.apache.org/zookeeper/zookeeper-3.8.3/apache-zookeeper-3.8.3-bin.tar.gz"
+zk_sha: "6a1c56557ee8de63dc0730de6c55640afa8ae9043e57539fed393120fe3adfb7f30a6ac13af0a6331ff34ba9c6f2b31e41e40c5446e669651522fffb9ce64e48  apache-zookeeper-3.9.1-bin.tar.gz"
+zk_checksum: "sha512:eb1a5e79fe55fa50e36021ca8b752e40584d5e24f23985c43e9f56abfbf23c0239dce37d18f27213c9a38fcb6f68daf1a9468fc352e6ac2364faaf9b56145bdf"
+zk_path: "/opt/zookeeper"
